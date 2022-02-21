@@ -1,0 +1,11 @@
+[windows]
+EXAMPLE_IPADDR
+
+[windows:vars]
+ansible_user=EXAMPLE_USERNAME
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
+ansible_port=5986
+ansible_winrm_scheme=https
+
+username=EXAMPLE_USERNAME

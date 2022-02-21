@@ -1,0 +1,77 @@
+---
+- name: Declutter Windows
+  import_playbook: declutter.yml
+
+- name: Get the host ready for Gaming
+  hosts: all
+
+  tasks:
+  - name: Ensure Discord is installed
+    win_package:
+      path: "https://discord.com/api/downloads/distributions/app/installers/latest?channel=stable&platform=win&arch=x86"
+      creates_path: "C:/Users/{{ username }}/AppData/Local/Discord/Update.exe"
+
+  - name: Ensure Minecraft is installed
+    win_package:
+      path: "https://launcher.mojang.com/download/MinecraftInstaller.msi"
+      creates_path: "C:/Program Files (x86)/Minecraft Launcher/MinecraftLauncher.exe"
+
+  # - name: Ensure Steam is installed
+  #   win_package:
+  #     path: "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe"
+  #     creates_path: "C:/Program Files (x86)/Steam/Steam.exe"
+  #     arguments:
+  #       - "/S"
+
+  - name: Ensure Opera is installed
+    win_package:
+      path: "https://net.geo.opera.com/opera/stable/windows"
+      creates_path: "C:/Users/{{ username }}/AppData/Local/Programs/Opera/launcher.exe"
+      arguments:
+        - "/silent"
+
+  - name: Ensure Epic Games Launcher is installed
+    win_package:
+      path: "https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/installer/download/EpicGamesLauncherInstaller.msi"
+      creates_path: "C:/Program Files (x86)/Epic Games/Launcher/Portal/Binaries/Win32/EpicGamesLauncher.exe"
+      arguments:
+        - "/qn"
+        - "/norestart"
+
+  # - name: Ensure League of Legends is installed
+  #   win_package:
+  #     path: "https://lol.secure.dyn.riotcdn.net/channels/public/x/installer/current/live.euw.exe"
+  #     creates_path: "C:/Riot Games/Riot Client/RiotClientServices.exe"
+
+  # - name: Ensure Origin Launcher is installed
+  #   win_package:
+  #     path: "https://www.dm.origin.com/download"
+  #     creates_path: "C:/Program Files (x86)/Origin/Origin.exe"
+
+  # - name: Ensure Battle.net launcher is installed
+
+
+
+# TODO: This does not WORK! See https://superuser.com/questions/1193985/command-line-code-to-pin-program-to-taskbar-windows-10.
+#       Replace with a group policy?
+
+  # - name: Ensure Edge is not on the taskbar
+  #   win_file:
+  #     path: "C:/Users/{{ username }}/AppData/Roaming/Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar/Microsoft Edge.lnk"
+  #     state: absent
+
+  # - name: Ensure Discord is on the taskbar
+  #   win_shortcut:
+  #     src: "C:/Users/{{ username }}/AppData/Local/Discord/Update.exe"
+  #     arguments: "--processStart Discord.exe"
+  #     directory: "C:/Users/{{ username }}/AppData/Local/Discord/app-1.0.9003"
+  #     dest: "C:/Users/{{ username }}/AppData/Roaming/Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar/Discord.lnk"
+  #     icon: "%USERPROFILE%/AppData/Local/Discord/app.ico"
+
+  # # - name Ensure Steam is on the taskbar
+
+  # - name: Ensure Opera is on the taskbar
+  #   win_shortcut:
+  #     src: "C:/Users/{{ username }}/AppData/Local/Programs/Opera/launcher.exe"
+  #     directory: "C:/Program Files/Opera"
+  #     dest: "C:/Users/{{ username }}/AppData/Roaming/Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar/Opera.lnk"
