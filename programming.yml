@@ -1,5 +1,5 @@
 ---
-- name: Declutter Windows
+- name: Ensure Windows is decluttered
   import_playbook: declutter.yml
 
 - name: Get the host ready for Gaming
@@ -16,24 +16,29 @@
   - name: Ensure Visual Studio Code is installed
     win_package:
       path: "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user"
-      creates_path: "C:/Users/Tim/AppData/Local/Programs/Microsoft VS Code/Code.exe"
+      creates_path: "C:/Users/{{ username }}/AppData/Local/Programs/Microsoft VS Code/Code.exe"
+      arguments:
+        - "/VERYSILENT"
+        - "/NORESTART"
+        - "/MERGETASKS=!runcode,desktopicon"
 
   # Add automatically enabling Auto Sync in VSCode
 
   # From https://docs.ansible.com/ansible/2.9/modules/win_optional_feature_module.html#win-optional-feature-module 
   - name: Ensure Microsoft Subsystem for Linux is installed
-  win_optional_feature:
-    name: Microsoft-Windows-Subsystem-Linux
-    state: present
-  register: wsl_status
+    win_optional_feature:
+      name: Microsoft-Windows-Subsystem-Linux
+      state: present
+    register: wsl_status
 
-  - name: Reboot if installing Linux Subsytem as feature requires it
+  - name: Reboot if installing Linux Subsystem as feature requires it
     win_reboot:
     when: wsl_status.reboot_required
 
   - name: Ensure Docker Desktop is installed
     win_package:
       path: "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe"
+      creates_path: "C:/Program Files/Docker/Docker/Docker Desktop.exe"
       arguments:
         - "install"
         - "--quiet"
