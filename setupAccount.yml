@@ -1,0 +1,10 @@
+---
+- name: Setup User to allow winRM
+  hosts: all
+  tasks:
+    - name: Ensure user is in Administrators group
+      win_group_membership: 
+        name: "Administrators"
+        members:
+          - "{{ username }}"
+        state: absent

@@ -75,3 +75,10 @@
       name: "AutoCheckSelect"
       data: 0
       type: "dword"
+
+  - name: ensure dark mode
+    win_regedit:
+      path: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"
+      name: "AppsUseLightTheme"
+      data: "0"
+      type: "dword"

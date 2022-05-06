@@ -6,41 +6,30 @@
   hosts: all
 
   tasks:
-  - name: Ensure Opera is installed
-    win_package:
-      path: "https://net.geo.opera.com/opera/stable/windows"
-      creates_path: "C:/Users/{{ username }}/AppData/Local/Programs/Opera/launcher.exe"
-      arguments:
-        - "/silent"
+  - name: Ensure Firefox is installed
+    chocolatey.chocolatey.win_chocolatey:
+      name: "firefox"
 
   - name: Ensure Visual Studio Code is installed
-    win_package:
-      path: "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user"
-      creates_path: "C:/Users/{{ username }}/AppData/Local/Programs/Microsoft VS Code/Code.exe"
-      arguments:
-        - "/VERYSILENT"
-        - "/NORESTART"
-        - "/MERGETASKS=!runcode,desktopicon"
+    chocolatey.chocolatey.win_chocolatey:
+      name: "vscode"
 
   # Add automatically enabling Auto Sync in VSCode
 
-  # From https://docs.ansible.com/ansible/2.9/modules/win_optional_feature_module.html#win-optional-feature-module 
-  - name: Ensure Microsoft Subsystem for Linux is installed
-    win_optional_feature:
-      name: Microsoft-Windows-Subsystem-Linux
-      state: present
-    register: wsl_status
-
-  - name: Reboot if installing Linux Subsystem as feature requires it
+  - name: Reboot
     win_reboot:
-    when: wsl_status.reboot_required
+
+  - name: Ensure Microsoft Subsystem for Linux is installed
+    chocolatey.chocolatey.win_chocolatey:
+      name: "wsl2"
 
   - name: Ensure Docker Desktop is installed
-    win_package:
-      path: "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe"
-      creates_path: "C:/Program Files/Docker/Docker/Docker Desktop.exe"
-      arguments:
-        - "install"
-        - "--quiet"
+    chocolatey.chocolatey.win_chocolatey:
+      name: "docker-desktop"
 
+  - name: Ensure User is in docker group
+    win_group_membership:
+      members:
+        - "{{ username }}"
+      name: "docker-users"
 

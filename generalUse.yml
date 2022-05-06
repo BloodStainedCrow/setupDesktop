@@ -1,0 +1,23 @@
+---
+- name: Ensure Windows is decluttered
+  import_playbook: declutter.yml
+
+- name: Get the host ready for general use
+  hosts: all
+
+  tasks:
+  - name: Ensure Firefox is installed
+    chocolatey.chocolatey.win_chocolatey:
+      name: "firefox"
+
+  - name: Ensure Spotify is installed
+    chocolatey.chocolatey.win_chocolatey:
+      name: "spotify"
+
+  - name: Ensure Zoom is installed
+    chocolatey.chocolatey.win_chocolatey:
+      name: "zoom"
+
+  - name: Ensure Paint.net is installed
+    chocolatey.chocolatey.win_chocolatey:
+      name: "paint.net"
