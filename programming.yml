@@ -2,34 +2,34 @@
 - name: Ensure Windows is decluttered
   import_playbook: declutter.yml
 
-- name: Get the host ready for Gaming
+- name: Get the host ready for Programming
   hosts: all
 
   tasks:
-  - name: Ensure Firefox is installed
-    chocolatey.chocolatey.win_chocolatey:
-      name: "firefox"
+    - name: Ensure Firefox is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "firefox"
 
-  - name: Ensure Visual Studio Code is installed
-    chocolatey.chocolatey.win_chocolatey:
-      name: "vscode"
+    - name: Ensure Visual Studio Code is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "vscode"
 
-  # Add automatically enabling Auto Sync in VSCode
+    # Add automatically enabling Auto Sync in VSCode or add needed Settings and Extensions
 
-  - name: Reboot
-    win_reboot:
+    # TODO: Check if this is necessary
+    # - name: Reboot
+    #   win_reboot:
 
-  - name: Ensure Microsoft Subsystem for Linux is installed
-    chocolatey.chocolatey.win_chocolatey:
-      name: "wsl2"
+    - name: Ensure Microsoft Subsystem for Linux is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "wsl2"
 
-  - name: Ensure Docker Desktop is installed
-    chocolatey.chocolatey.win_chocolatey:
-      name: "docker-desktop"
+    - name: Ensure Docker Desktop is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "docker-desktop"
 
-  - name: Ensure User is in docker group
-    win_group_membership:
-      members:
-        - "{{ username }}"
-      name: "docker-users"
-
+    - name: Ensure User is in docker group
+      win_group_membership:
+        members:
+          - "{{ username }}"
+        name: "docker-users"

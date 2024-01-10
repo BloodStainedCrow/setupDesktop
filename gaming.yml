@@ -7,63 +7,65 @@
   become_method: runas
 
   tasks:
-  - name: Ensure Discord is installed
-    chocolatey.chocolatey.win_chocolatey:
-      name: "discord"
+    - name: Ensure Discord is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "discord"
 
-  - name: Ensure Minecraft is installed
-    chocolatey.chocolatey.win_chocolatey:
-      name: "minecraft-launcher"
+    - name: Ensure Minecraft is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "minecraft-launcher"
 
-  - name: Ensure Steam is installed
-    chocolatey.chocolatey.win_chocolatey:
-      name: "steam-client"
+    - name: Ensure Steam is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "steam-client"
 
-  - name: Ensure Firefox is installed
-    chocolatey.chocolatey.win_chocolatey:
-      name: "firefox"
+    - name: Ensure Firefox is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "firefox"
 
-  - name: Ensure Epic Games Launcher is installed
-    chocolatey.chocolatey.win_chocolatey:
-      name: "epicgameslauncher"
+    - name: Ensure Epic Games Launcher is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "epicgameslauncher"
 
-  # - name: Ensure League of Legends is installed
-  #   chocolatey.chocolatey.win_chocolatey:
-  #     name: "leagueoflegends"
+    # - name: Ensure League of Legends is installed
+    #   chocolatey.chocolatey.win_chocolatey:
+    #     name: "leagueoflegends"
 
-  - name: Ensure Origin Launcher is installed
-    chocolatey.chocolatey.win_chocolatey:
-      name: "origin"
+    - name: Ensure Origin Launcher is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "origin"
 
-  # - name: Ensure Battle.net launcher is installed
-  # Since there is no way to install battle.net silently this is currently impossible
+    # - name: Ensure Battle.net launcher is installed
+    # Since there is no way to install battle.net silently this is currently impossible
 
-  - name: Ensure MSI Afterburner is installed
-    chocolatey.chocolatey.win_chocolatey:
-      name: "msiafterburner"
+    - name: Ensure MSI Afterburner is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "msiafterburner"
 
+    - name: Ensure HWINFO is installed
+      chocolatey.chocolatey.win_chocolatey:
+        name: "hwinfo"
 
+  # TODO: This does not WORK! See https://superuser.com/questions/1193985/command-line-code-to-pin-program-to-taskbar-windows-10.
+  #       Replace with a group policy?
 
-# TODO: This does not WORK! See https://superuser.com/questions/1193985/command-line-code-to-pin-program-to-taskbar-windows-10.
-#       Replace with a group policy?
+    # - name: Ensure Edge is not on the taskbar
+    #   win_file:
+    #     path: "C:/Users/{{ username }}/AppData/Roaming/Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar/Microsoft Edge.lnk"
+    #     state: absent
 
-  # - name: Ensure Edge is not on the taskbar
-  #   win_file:
-  #     path: "C:/Users/{{ username }}/AppData/Roaming/Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar/Microsoft Edge.lnk"
-  #     state: absent
+    # - name: Ensure Discord is on the taskbar
+    #   win_shortcut:
+    #     src: "C:/Users/{{ username }}/AppData/Local/Discord/Update.exe"
+    #     arguments: "--processStart Discord.exe"
+    #     directory: "C:/Users/{{ username }}/AppData/Local/Discord/app-1.0.9003"
+    #     dest: "C:/Users/{{ username }}/AppData/Roaming/Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar/Discord.lnk"
+    #     icon: "%USERPROFILE%/AppData/Local/Discord/app.ico"
 
-  # - name: Ensure Discord is on the taskbar
-  #   win_shortcut:
-  #     src: "C:/Users/{{ username }}/AppData/Local/Discord/Update.exe"
-  #     arguments: "--processStart Discord.exe"
-  #     directory: "C:/Users/{{ username }}/AppData/Local/Discord/app-1.0.9003"
-  #     dest: "C:/Users/{{ username }}/AppData/Roaming/Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar/Discord.lnk"
-  #     icon: "%USERPROFILE%/AppData/Local/Discord/app.ico"
+    # # - name Ensure Steam is on the taskbar
 
-  # # - name Ensure Steam is on the taskbar
-
-  # - name: Ensure Opera is on the taskbar
-  #   win_shortcut:
-  #     src: "C:/Users/{{ username }}/AppData/Local/Programs/Opera/launcher.exe"
-  #     directory: "C:/Program Files/Opera"
-  #     dest: "C:/Users/{{ username }}/AppData/Roaming/Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar/Opera.lnk"
+    # - name: Ensure Opera is on the taskbar
+    #   win_shortcut:
+    #     src: "C:/Users/{{ username }}/AppData/Local/Programs/Opera/launcher.exe"
+    #     directory: "C:/Program Files/Opera"
+    #     dest: "C:/Users/{{ username }}/AppData/Roaming/Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar/Opera.lnk"

@@ -3,8 +3,8 @@
   hosts: all
   tasks:
     - name: Ensure user is in Administrators group
-      win_group_membership: 
+      ansible.windows.win_group_membership:
         name: "Administrators"
         members:
           - "{{ username }}"
-        state: absent
+        state: present

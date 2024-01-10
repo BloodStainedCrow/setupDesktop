@@ -1,0 +1,25 @@
+- name: Add Item to the taskbar
+  community.windows.win_scheduled_task:
+    actions:
+      - path: "C:/Users/{{ username }}/Downloads/pttb.exe"
+        arguments: "\"{{ item }}\""
+      - path: cmd.exe
+        arguments: /c schtasks.exe /Delete /TN AddItemtothetaskbar /F
+
+    enables: true
+    username: "{{ username }}"
+    logon_type: "interactive_token"
+    name: "AddItemtothetaskbar"
+
+    triggers:
+      - type: registration
+
+    state: present
+
+- name: Wait for the scheduled tasks to "Add Item to the taskbar" to complete
+  community.windows.win_scheduled_task_stat:
+    name: "AddItemtothetaskbar"
+  register: task_stat
+  until: (task_stat.state is defined and task_stat.state.status != "TASK_STATE_RUNNING") or (task_stat.task_exists == False)
+  retries: 12
+  delay: 10

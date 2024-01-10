@@ -1,0 +1,60 @@
+---
+- name: Setup the taskbar
+  hosts: all
+  become_method: runas
+
+  tasks:
+    - name: Get pttb
+    # Pttb is a command line tool to add files to the taskbar https://github.com/0x546F6D/pttb_-_Pin_To_TaskBar
+      ansible.windows.win_get_url:
+        url: https://github.com/0x546F6D/pttb_-_Pin_To_TaskBar/releases/download/230124/pttb.exe
+        dest: C:/Users/{{ username }}/Downloads/pttb.exe
+    - name: Get all items on the taskbar
+      ansible.windows.win_find:
+        paths:
+          - "C:/Users/{{ username }}/AppData/Roaming/Microsoft/Internet Explorer/Quick Launch/User Pinned/TaskBar"
+      register: win_find_res
+
+    # TODO: Also remove items from taskbar using REGEDIT
+    - name: Clear the taskbar
+      community.windows.win_scheduled_task:
+        actions:
+          - path: "C:/Users/{{ username }}/Downloads/pttb.exe"
+            arguments: "-u \"{{ item.path }}\""
+          - path: cmd.exe
+            arguments: "/c schtasks.exe /Delete /TN Remove{{ item.filename }}fromthetaskbar /F"
+
+        enables: true
+        username: "{{ username }}"
+        logon_type: "interactive_token"
+        run_level: highest
+        name: "Remove{{ item.filename }}fromthetaskbar"
+
+        triggers:
+          - type: registration
+
+        state: present
+      with_items:
+        - "{{ win_find_res.files }}"
+
+
+    - name: Wait for the scheduled tasks to "Remove Taskbar items" to complete
+      community.windows.win_scheduled_task_stat:
+        name: "Remove{{ item.filename }}fromthetaskbar"
+      register: task_stat
+      until: (task_stat.state is defined and task_stat.state.status != "TASK_STATE_RUNNING") or (task_stat.task_exists == False)
+      retries: 12
+      delay: 10
+      with_items:
+        - "{{ win_find_res.files }}"
+
+    - name: Add Items to Taskbar
+      ansible.builtin.include_tasks: "addItemToTaskbar.yml"
+      with_items:
+        - "C:/Windows/Explorer.exe"
+        - "C:/ProgramData/Microsoft/Windows/Start Menu/Programs/Firefox.lnk"
+        - "C:/ProgramData/Microsoft/Windows/Start Menu/Programs/Thunderbird.lnk"
+        - "C:/Users/Tim/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Discord Inc/Discord.lnk"
+        - "C:/Users/Tim/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Element/Element.lnk"
+        - "C:/Users/Tim/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Steam/Steam.lnk"
+        - "C:/ProgramData/Microsoft/Windows/Start Menu/Programs/Visual Studio Code/Visual Studio Code.lnk"

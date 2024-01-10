@@ -3,82 +3,78 @@
   hosts: all
 
   tasks:
-# Windows Stuff!
-  - name: Check if Cortana is installed
-    win_shell: "Get-AppxPackage -Name Microsoft.549981C3F5F10"
-    register: cortanaInfo
-    changed_when: false
+    - name: Check if Cortana is installed
+      ansible.windows.win_shell: "Get-AppxPackage -Name Microsoft.549981C3F5F10"
+      register: cortana_info
+      changed_when: false
 
-  - name: Ensure Cortana is uninstalled
-    win_shell: "Get-AppxPackage -Name Microsoft.549981C3F5F10 | Remove-AppxPackage"
-    failed_when: false
-    when: "'Name' in cortanaInfo.stdout"
+    - name: Ensure Cortana is uninstalled
+      ansible.windows.win_shell: "Get-AppxPackage -Name Microsoft.549981C3F5F10 | Remove-AppxPackage"
+      failed_when: false
+      when: "'Name' in cortana_info.stdout"
 
-  - name: 'Remove "News and Interests" from taskbar'
-    win_regedit:
-      path: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Feeds"
-      name: "ShellFeedsTaskbarViewMode"
-      data: 2
-      type: "dword"
+    - name: 'Remove "News and Interests" from taskbar'
+      ansible.windows.win_regedit:
+        path: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Feeds"
+        name: "ShellFeedsTaskbarViewMode"
+        data: 2
+        type: "dword"
 
-  - name: Check if One Drive is installed
-    win_reg_stat:
-      path: "HKCR:\\Wow6432Node\\CLSID\\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
-    register: oneDriveInfo
+    - name: Check if One Drive is installed
+      ansible.windows.win_reg_stat:
+        path: "HKCR:\\Wow6432Node\\CLSID\\{018D5C66-4533-4307-9B53-224DE2ED1FE6}"
+      register: one_drive_info
 
-  # Source: https://github.com/oatakan/ansible-role-windows_template_build/blob/master/tasks/remove-onedrive.yml
-  - name: Ensure Onedrive is uninstalled
-    when: oneDriveInfo.exists
-    block:
-      - name: kill onedrive process
-        win_shell: Stop-Process -Name OneDrive
-        ignore_errors: yes
+    # Source: https://github.com/oatakan/ansible-role-windows_template_build/blob/master/tasks/remove-onedrive.yml
+    - name: Ensure Onedrive is uninstalled
+      when: one_drive_info.exists
+      block:
+        - name: Kill onedrive process
+          ansible.windows.win_shell: Stop-Process -Name OneDrive
+          ignore_errors: true
 
-      - name: uninstall onedrive
-        win_shell: 'C:/Windows/SysWOW64/OneDriveSetup.exe /uninstall'
-        ignore_errors: yes
+        - name: Uninstall onedrive
+          ansible.windows.win_shell: 'C:/Windows/SysWOW64/OneDriveSetup.exe /uninstall'
 
-      - name: remove onedrivesync package
-        win_shell: get-appxpackage *Microsoft.OneDriveSync* | remove-appxpackage -AllUsers
-        ignore_errors: yes
+        - name: Remove onedrivesync package
+          ansible.windows.win_shell: get-appxpackage *Microsoft.OneDriveSync* | remove-appxpackage -AllUsers
 
-      - name: remove onedrive directories
-        win_file:
-          path: '{{ item }}'
-          state: absent
-        ignore_errors: yes
-        loop:
-          - 'C:/Users/{{ username }}/OneDrive'
-          - 'C:/Users/{{ username }}/AppData/Local/Microsoft/OneDrive'
-          - 'C:/ProgramData\Microsoft OneDrive'
-          - C:/OneDriveTemp
+        - name: Remove onedrive directories
+          ansible.windows.win_file:
+            path: '{{ item }}'
+            state: absent
+          loop:
+            - 'C:/Users/{{ username }}/OneDrive'
+            - 'C:/Users/{{ username }}/AppData/Local/Microsoft/OneDrive'
+            - 'C:/ProgramData\Microsoft OneDrive'
+            - C:/OneDriveTemp
 
-      - name: delete onedrive registry keys
-        win_regedit:
-          path: '{{ item }}'
-          state: absent
-          delete_key: yes
-        loop:
-          - HKCR:\\CLSID\\{018D5C66-4533-4307-9B53-224DE2ED1FE6}
-          - HKCR:\\Wow6432Node\\CLSID\\{018D5C66-4533-4307-9B53-224DE2ED1FE6}
+        - name: Delete onedrive registry keys
+          ansible.windows.win_regedit:
+            path: '{{ item }}'
+            state: absent
+            delete_key: true
+          loop:
+            - HKCR:\\CLSID\\{018D5C66-4533-4307-9B53-224DE2ED1FE6}
+            - HKCR:\\Wow6432Node\\CLSID\\{018D5C66-4533-4307-9B53-224DE2ED1FE6}
 
-  - name: Ensure Teams 'Talk now' is removed
-    win_regedit:
-      path: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer"
-      name: "HideSCAMeetNow"
-      data: 1
-      type: "dword"
+    - name: Ensure Teams 'Talk now' is removed
+      ansible.windows.win_regedit:
+        path: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer"
+        name: "HideSCAMeetNow"
+        data: 1
+        type: "dword"
 
-  - name: Ensure Checkboxes from Explorer and Desktop are removed
-    win_regedit:
-      path: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced"
-      name: "AutoCheckSelect"
-      data: 0
-      type: "dword"
+    - name: Ensure Checkboxes from Explorer and Desktop are removed
+      ansible.windows.win_regedit:
+        path: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced"
+        name: "AutoCheckSelect"
+        data: 0
+        type: "dword"
 
-  - name: ensure dark mode
-    win_regedit:
-      path: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"
-      name: "AppsUseLightTheme"
-      data: "0"
-      type: "dword"
+    - name: Ensure dark mode
+      ansible.windows.win_regedit:
+        path: "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize"
+        name: "AppsUseLightTheme"
+        data: "0"
+        type: "dword"
